@@ -113,7 +113,6 @@ def main():
             shap_values += batch_shap_values[i]
 
         print(f"{len(batch_images)} images processed in this batch")
-        break
 
     # Normalize SHAP values by the number of attack images
     #shap_values /= len(attack_loader.dataset)
