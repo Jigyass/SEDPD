@@ -12,13 +12,13 @@
 # module load cuda/11.3
 
 # Activate virtual environment
-source Training/bin/activate
+source SHAP/bin/activate
 
 # Print details about the job
 echo "Job ${SLURM_JOB_ID} running on ${HOSTNAME}"
 
 # Run your Python script
-python3 Shap_values.py
+python3 Defense.py
 
 # Optional: Deactivate virtual environment (cleanup)
 deactivate
