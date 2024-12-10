@@ -1,1 +1,2 @@
-Creating models for CNN, ResNet50 and ConvMixer
+defense = slurm 59243
+lime = slurm 59245 
