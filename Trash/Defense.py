@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[1]:
+# In[3]:
 
 
 from torchvision import datasets, transforms
@@ -19,7 +19,7 @@ import pandas as pd
 from scipy.special import comb
 
 
-# In[2]:
+# In[4]:
 
 
 # Define transformations
@@ -54,14 +54,14 @@ print(f"Training samples: {len(train_data)}")
 print(f"Test samples: {len(test_data)}")
 
 
-# In[3]:
+# In[5]:
 
 
 def get_pixel_coords(flat_indices, width):
     return [divmod(idx, width) for idx in flat_indices]
 
 
-# In[4]:
+# In[6]:
 
 
 def calculate_pixel_frequencies_from_loader(data_loader, pixel_coords):
@@ -99,7 +99,7 @@ def calculate_pixel_frequencies_from_loader(data_loader, pixel_coords):
     return pixel_freq
 
 
-# In[5]:
+# In[7]:
 
 
 # Define the top 22 coordinates
@@ -118,7 +118,7 @@ pixel_freq = calculate_pixel_frequencies_from_loader(train_loader, top_22_coords
 print(pixel_freq[(118, 178)])
 
 
-# In[6]:
+# In[8]:
 
 
 def aggregate_rgb_frequencies(pixel_freq):
@@ -163,7 +163,7 @@ def aggregate_rgb_frequencies(pixel_freq):
     return result
 
 
-# In[7]:
+# In[9]:
 
 
 # Assuming `pixel_freq` is the output from `calculate_pixel_frequencies_from_loader`
@@ -173,7 +173,7 @@ result_df = aggregate_rgb_frequencies(pixel_freq)
 print(result_df)
 
 
-# In[8]:
+# In[10]:
 
 
 def analyze_max_x_for_epsilon(df, t, epsilon):
@@ -214,15 +214,15 @@ def analyze_max_x_for_epsilon(df, t, epsilon):
     return pd.DataFrame(results, columns=['x', 'y', 'gray_value', 'max_x'])
 
 
-# In[12]:
+# In[ ]:
 
 
-results_df = analyze_max_x_for_epsilon(result_df, t=2, epsilon=8)
+results_df = analyze_max_x_for_epsilon(result_df, t=5, epsilon=1)
 maxValues = results_df.max()
 print(maxValues)
 
 
-# In[13]:
+# In[12]:
 
 
 def sample_rgb_values(pixel_freq, pixel_coords, results_df, original_df):
@@ -271,7 +271,7 @@ def sample_rgb_values(pixel_freq, pixel_coords, results_df, original_df):
     return sampled_rgb_values
 
 
-# In[14]:
+# In[13]:
 
 
 sampled_values = sample_rgb_values(pixel_freq, top_22_coords, results_df, result_df)
@@ -283,70 +283,7 @@ print(sampled_values[(118, 178)])
 # In[ ]:
 
 
-from PIL import Image
-import os
-import torch
-import torchvision.transforms as transforms
 
-def apply_samples_to_images_and_save(data_loader, sampled_rgb_values, pixel_coords, output_dir):
-    """
-    Apply sampled RGB values to images and save them to a destination folder.
-
-    Args:
-        data_loader (DataLoader): DataLoader containing the images to modify.
-        sampled_rgb_values (dict): Dictionary of sampled RGB values for each pixel.
-        pixel_coords (list of tuples): List of pixel coordinates to evaluate.
-        output_dir (str): Path to the destination folder for saving images.
-    """
-    # Ensure the output directory exists
-    os.makedirs(output_dir, exist_ok=True)
-
-    # Transform to convert tensor to PIL Image
-    to_pil = transforms.ToPILImage()
-
-    # Process each image in the data loader
-    for batch_idx, (images, _) in enumerate(data_loader):
-        images = images.clone()  # Clone to avoid modifying the original data
-        batch_size = images.size(0)
-
-        for img_idx in range(batch_size):
-            image_tensor = images[img_idx]
-            img_array = image_tensor.permute(1, 2, 0).cpu().numpy()  # Convert to (H, W, C)
-
-            height, width, _ = img_array.shape
-            for coord in pixel_coords:
-                x, y = coord
-                if x < height and y < width:
-                    if (x, y) in sampled_rgb_values:
-                        gray_levels = sampled_rgb_values[(x, y)]
-                        found = False
-                        for gray_level in gray_levels:
-                            if img_idx in gray_levels[gray_level]:
-                                found = True
-                                break
-                        if not found:
-                            img_array[x, y] = [0, 0, 0]  # Set to black if no match
-                    else:
-                        img_array[x, y] = [0, 0, 0]  # Set to black for unmatched coordinates
-
-            # Convert modified array back to tensor
-            modified_tensor = torch.from_numpy(img_array).permute(2, 0, 1)
-
-            # Save the modified tensor as an image
-            pil_image = to_pil(modified_tensor)
-            output_path = os.path.join(output_dir, f"image_{batch_idx * batch_size + img_idx}.png")
-            pil_image.save(output_path)
-
-        print(f"Processed batch {batch_idx + 1}/{len(data_loader)}")
-
-    print(f"Modified images saved to {output_dir}")
-
-
-# In[ ]:
-
-
-output_dir = "/home/j597s263/scratch/j597s263/Datasets/Defense/ConvImag_Shap/"
-apply_samples_to_images_and_save(attack_loader, sampled_rgb_values, top_22_coords, output_dir)
 
 
 # In[ ]:
