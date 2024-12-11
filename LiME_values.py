@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[2]:
+# In[1]:
 
 
 from torchvision import datasets, transforms
@@ -18,7 +18,7 @@ import random
 import shap
 
 
-# In[3]:
+# In[2]:
 
 
 import torch.nn as nn
@@ -60,7 +60,7 @@ def ConvMixer():
     )
 
 
-# In[5]:
+# In[3]:
 
 
 import torch
@@ -76,7 +76,7 @@ model.eval()
 print("Model loaded successfully!")
 
 
-# In[7]:
+# In[4]:
 
 
 # Define transformations
@@ -114,7 +114,7 @@ print(f"Training samples: {len(train_data)}")
 print(f"Test samples: {len(test_data)}")
 
 
-# In[11]:
+# In[5]:
 
 
 import torch
@@ -146,32 +146,36 @@ output_file = "/home/j597s263/scratch/j597s263/Datasets/Explanation_values/lime_
 lime_explanations = []
 
 # Process the attack_loader
-for idx, (image_tensor, label) in enumerate(attack_loader):
+for idx, (image_tensor, _) in enumerate(attack_loader):  # Use _ for unused label
     # Handle the batch dimension properly
     for img_idx in range(image_tensor.size(0)):  # Iterate over batch
         single_image_tensor = image_tensor[img_idx]  # Extract single image tensor
-        single_label = label[img_idx].item()  # Extract corresponding label
 
         # Convert the image tensor to HWC format (required by LIME)
         image = single_image_tensor.permute(1, 2, 0).cpu().numpy()  # (H, W, C)
+
+        # Get the model's predicted label
+        single_image_tensor = single_image_tensor.unsqueeze(0).to(device)  # Add batch dimension
+        outputs = model(single_image_tensor)
+        predicted_class = torch.argmax(outputs, dim=1).item()
 
         # Generate LIME explanation
         explanation = explainer.explain_instance(
             image,                    # Input image (HWC format)
             predict_function,         # Prediction function
-            labels=(single_label,),   # Ground truth label to explain
+            labels=(predicted_class,),# Predicted label to explain
             top_labels=1,             # LIME will include the top predicted label
             hide_color=0,             # Color to hide (optional)
             num_samples=1000          # Number of perturbations
         )
 
-        # Determine the label to explain
-        if single_label in explanation.local_exp:
-            label_to_explain = single_label  # Ground truth label
+        # Check if the predicted class is in the explanation
+        if predicted_class in explanation.local_exp:
+            label_to_explain = predicted_class  # Use the predicted class
         else:
-            # Use the top predicted label if the ground truth label is not available
+            # Use the top predicted label if the predicted class is not available
             label_to_explain = list(explanation.local_exp.keys())[0]
-            print(f"Ground truth label {single_label} not in explanation. Using top predicted label {label_to_explain}.")
+            print(f"Predicted class {predicted_class} not in explanation. Using top predicted label {label_to_explain}.")
 
         # Save the explanation mask for the selected label
         _, mask = explanation.get_image_and_mask(
