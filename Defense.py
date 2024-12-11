@@ -345,8 +345,8 @@ def apply_samples_to_images_and_save(data_loader, sampled_rgb_values, pixel_coor
 # In[ ]:
 
 
-output_dir = "/home/j597s263/scratch/j597s263/Datasets/Defense/ConvImag_Shap/"
-apply_samples_to_images_and_save(attack_loader, sampled_rgb_values, top_22_coords, output_dir)
+output_dir = "/home/j597s263/scratch/j597s263/Datasets/Defense/ConvImag_Shap"
+apply_samples_to_images_and_save(train_loader, sampled_values, top_22_coords, output_dir)
 
 
 # In[ ]:
