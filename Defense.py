@@ -214,20 +214,23 @@ def analyze_max_x_for_epsilon(df, t, epsilon):
     return pd.DataFrame(results, columns=['x', 'y', 'gray_value', 'max_x'])
 
 
-# In[12]:
+# In[9]:
 
 
-results_df = analyze_max_x_for_epsilon(result_df, t=2, epsilon=8)
+results_df = analyze_max_x_for_epsilon(result_df, t=1, epsilon=2)
 maxValues = results_df.max()
 print(maxValues)
 
 
-# In[13]:
+# In[10]:
 
 
-def sample_rgb_values(pixel_freq, pixel_coords, results_df, original_df):
+import random
+import pickle
+
+def sample_rgb_values(pixel_freq, pixel_coords, results_df, original_df, save_path=None):
     """
-    Sample RGB values based on max_x for each pixel coordinate.
+    Sample RGB values based on max_x for each pixel coordinate and optionally save them.
 
     Args:
         pixel_freq (dict): Dictionary of pixel frequencies with coordinates as keys
@@ -235,6 +238,7 @@ def sample_rgb_values(pixel_freq, pixel_coords, results_df, original_df):
         pixel_coords (list of tuples): List of pixel coordinates to evaluate.
         results_df (pd.DataFrame): DataFrame containing 'x', 'y', 'gray_value', and 'max_x'.
         original_df (pd.DataFrame): Original DataFrame containing pixel RGB and frequency data.
+        save_path (str, optional): Path to save the sampled RGB values. If provided, saves the result.
 
     Returns:
         dict: Dictionary of sampled RGB values for each coordinate and grayscale level.
@@ -268,44 +272,50 @@ def sample_rgb_values(pixel_freq, pixel_coords, results_df, original_df):
             # Sample up to max_x RGB values, or return an empty list if insufficient values
             sampled_rgb_values[(i, j)][gray_value] = random.sample(rgb_values, int(max_x)) if len(rgb_values) >= max_x else []
 
+    # Save the sampled RGB values if a save path is provided
+    if save_path:
+        with open(save_path, 'wb') as f:
+            pickle.dump(sampled_rgb_values, f)
+        print(f"Sampled RGB values saved to {save_path}")
+
     return sampled_rgb_values
 
 
-# In[14]:
+# In[11]:
 
 
-sampled_values = sample_rgb_values(pixel_freq, top_22_coords, results_df, result_df)
+import time
 
-# Inspect sampled RGB values for a specific coordinate
-print(sampled_values[(118, 178)])
+start_time = time.time()
+
+sampled_values = sample_rgb_values(pixel_freq, top_22_coords, results_df, result_df, save_path="/home/j597s263/scratch/j597s263/Datasets/Defense/Sampled_Values/t1e2.pkl")
+
+end_time = time.time()
+
+print(f"Execution time: {end_time - start_time:.2f} seconds")
 
 
 # In[ ]:
 
 
-from PIL import Image
 import os
 import torch
-import torchvision.transforms as transforms
 
-def apply_samples_to_images_and_save(data_loader, sampled_rgb_values, pixel_coords, output_dir):
+def apply_samples_to_dataset(data_loader, sampled_rgb_values, pixel_coords, output_path):
     """
-    Apply sampled RGB values to images and save them to a destination folder.
+    Apply sampled RGB values to images and save the dataset with labels to a file.
 
     Args:
         data_loader (DataLoader): DataLoader containing the images to modify.
         sampled_rgb_values (dict): Dictionary of sampled RGB values for each pixel.
         pixel_coords (list of tuples): List of pixel coordinates to evaluate.
-        output_dir (str): Path to the destination folder for saving images.
+        output_path (str): Path to the file where the dataset will be saved.
     """
-    # Ensure the output directory exists
-    os.makedirs(output_dir, exist_ok=True)
-
-    # Transform to convert tensor to PIL Image
-    to_pil = transforms.ToPILImage()
+    modified_images = []
+    labels = []
 
     # Process each image in the data loader
-    for batch_idx, (images, _) in enumerate(data_loader):
+    for batch_idx, (images, batch_labels) in enumerate(data_loader):
         images = images.clone()  # Clone to avoid modifying the original data
         batch_size = images.size(0)
 
@@ -332,25 +342,24 @@ def apply_samples_to_images_and_save(data_loader, sampled_rgb_values, pixel_coor
             # Convert modified array back to tensor
             modified_tensor = torch.from_numpy(img_array).permute(2, 0, 1)
 
-            # Save the modified tensor as an image
-            pil_image = to_pil(modified_tensor)
-            output_path = os.path.join(output_dir, f"image_{batch_idx * batch_size + img_idx}.png")
-            pil_image.save(output_path)
+            # Add modified tensor and corresponding label to the dataset
+            modified_images.append(modified_tensor)
+            labels.append(batch_labels[img_idx].item())
 
         print(f"Processed batch {batch_idx + 1}/{len(data_loader)}")
 
-    print(f"Modified images saved to {output_dir}")
+    # Save the modified dataset
+    dataset = {
+        "images": torch.stack(modified_images),
+        "labels": torch.tensor(labels)
+    }
+    torch.save(dataset, output_path)
+    print(f"Modified dataset saved to {output_path}")
 
 
 # In[ ]:
 
 
-output_dir = "/home/j597s263/scratch/j597s263/Datasets/Defense/ConvImag_Shap"
+output_dir = "/home/j597s263/scratch/j597s263/Datasets/Defense/DefenseCM.pt"
 apply_samples_to_images_and_save(train_loader, sampled_values, top_22_coords, output_dir)
-
-
-# In[ ]:
-
-
-
 
