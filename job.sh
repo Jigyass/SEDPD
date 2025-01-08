@@ -18,7 +18,7 @@ source SHAP/bin/activate
 echo "Job ${SLURM_JOB_ID} running on ${HOSTNAME}"
 
 # Run your Python script
-python3 ResNet_BaseModel.py
+python3 Sbatch/ConvMixer_Cifar10.py
 
 # Optional: Deactivate virtual environment (cleanup)
 deactivate
