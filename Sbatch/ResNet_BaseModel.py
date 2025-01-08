@@ -209,9 +209,9 @@ model = ResNet50(num_classes=10).to('cuda')
 
 
 # Hyperparameters
-epochs = 150
-learning_rate = 0.005
-opt_eps = 1e-3
+epochs = 70
+learning_rate = 0.001
+opt_eps = 1e-4
 clip_grad = 1.0
 device = 'cuda'  
 
