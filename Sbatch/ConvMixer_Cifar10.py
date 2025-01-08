@@ -129,7 +129,7 @@ model = ConvMixer().to('cuda')
 
 
 # Hyperparameters
-epochs = 1#70
+epochs = 70
 learning_rate = 0.005
 opt_eps = 1e-3
 clip_grad = 1.0
