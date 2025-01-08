@@ -1,0 +1,13 @@
+Job 61081 running on g031
+/moosefs/scratch/j597s263/j597s263/SEDPD/Sbatch/ConvMixer_Cifar10.py:151: FutureWarning: `torch.cuda.amp.GradScaler(args...)` is deprecated. Please use `torch.amp.GradScaler('cuda', args...)` instead.
+  scaler = GradScaler()
+/moosefs/scratch/j597s263/j597s263/SEDPD/Sbatch/ConvMixer_Cifar10.py:164: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with autocast():
+Training data: 50000 samples
+Testing data: 10000 samples
+Original training samples: 50000
+Training samples after split: 45000
+Validation samples: 5000
+Testing samples (unchanged): 10000
+Epoch [1/1], Training Loss: 1.3626
+Epoch [1/1], Test Loss: 1.0006, Test Accuracy: 64.64%

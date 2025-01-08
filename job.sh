@@ -6,7 +6,7 @@
 #SBATCH --mem=80GB                # Request 80GB memory
 #SBATCH -t 5-23:20:00             # 5 hour time limit
 #SBATCH -J ResNet5                # Name of the job
-#SBATCH -o slurm-%j.out           # Save output to slurm-<job_id>.out
+#SBATCH -o Slurm_Outputs/ConvCifB.out           # Save output to slurm-<job_id>.out
 
 # Load modules (if needed) - Uncomment and customize as required
 # module load cuda/11.3

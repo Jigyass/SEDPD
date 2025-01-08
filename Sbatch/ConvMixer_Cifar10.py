@@ -209,7 +209,7 @@ for epoch in range(epochs):
 # In[ ]:
 
 
-torch.save(model, '/home/j597s263/Models/Conv_Cifar.mod')
+torch.save(model, '/home/j597s263/scratch/j597s263/Models/ConvModels/ConvCifar.mod')
 
 
 # In[ ]:
