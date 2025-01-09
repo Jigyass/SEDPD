@@ -5,8 +5,8 @@
 #SBATCH -c 16                            # Request 16 CPU cores
 #SBATCH --mem=80GB                       # Request 80GB memory
 #SBATCH -t 5-23:20:00                    # 5 hour time limit
-#SBATCH -J ResImgLime                    # Name of the job
-#SBATCH -o Slurm_Outputs/ResImgLime.out  # Save output to slurm-<job_id>.out
+#SBATCH -J ConvCifLim                    # Name of the job
+#SBATCH -o Slurm_Outputs/ConvCifLime.out  # Save output to slurm-<job_id>.out
 
 # Load modules (if needed) - Uncomment and customize as required
 # module load cuda/11.3
@@ -18,7 +18,7 @@ source SHAP/bin/activate
 echo "Job ${SLURM_JOB_ID} running on ${HOSTNAME}"
 
 # Run your Python script
-python3 Sbatch/ResImgLim.py
+python3 Sbatch/ConvCifLim.py
 
 # Optional: Deactivate virtual environment (cleanup)
 deactivate
