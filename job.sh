@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #SBATCH -p gpu                           # Specify the GPU partition
-#SBATCH --gres=gpu:v100:1                # Request 1 A100 GPU
+#SBATCH --gres=gpu:p100:1                # Request 1 A100 GPU
 #SBATCH -c 16                            # Request 16 CPU cores
 #SBATCH --mem=80GB                       # Request 80GB memory
 #SBATCH -t 5-23:20:00                    # 5 hour time limit
