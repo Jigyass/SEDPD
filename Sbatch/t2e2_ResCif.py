@@ -119,7 +119,7 @@ top_22_coords = [
 
 pixel_freq = calculate_pixel_frequencies_from_loader(train_loader, top_22_coords)
 
-print(pixel_freq[(132, 96)])
+#print(pixel_freq[(132, 96)])
 
 
 # In[7]:
