@@ -1,0 +1,3 @@
+Job 61121 running on g016
+/moosefs/scratch/j597s263/j597s263/SEDPD/Sbatch/t2e2_ConvCif.py:158: DeprecationWarning: DataFrameGroupBy.apply operated on the grouping columns. This behavior is deprecated, and in a future version of pandas the grouping columns will be excluded from the operation. Either pass `include_groups=False` to exclude the groupings or explicitly select the grouping columns after groupby to silence this warning.
+  result = grouped.apply(

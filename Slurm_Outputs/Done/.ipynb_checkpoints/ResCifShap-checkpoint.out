@@ -1,0 +1,28 @@
+Job 61095 running on g031
+Model loaded successfully!
+Original training samples: 50000
+Training samples after split: 45000
+Attack samples: 5000
+Testing samples (unchanged): 10000
+256 images processed in this batch
+256 images processed in this batch
+256 images processed in this batch
+256 images processed in this batch
+256 images processed in this batch
+256 images processed in this batch
+256 images processed in this batch
+256 images processed in this batch
+256 images processed in this batch
+256 images processed in this batch
+256 images processed in this batch
+256 images processed in this batch
+256 images processed in this batch
+256 images processed in this batch
+256 images processed in this batch
+256 images processed in this batch
+256 images processed in this batch
+256 images processed in this batch
+256 images processed in this batch
+136 images processed in this batch
+SHAP value aggregation completed!
+Aggregated SHAP values saved to /home/j597s263/scratch/j597s263/Datasets/Explanation_values/Resnet/ShapCifar.npy
