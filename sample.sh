@@ -4,7 +4,7 @@
 #SBATCH --gres=gpu:a100:1  # Request 1 A100 GPU
 #SBATCH -c 16              # Request 4 CPU cores
 #SBATCH --mem=128GB        # Request 16GB memory
-#SBATCH -t 5-20:30:00      # Set a 30-minute time limit
+#SBATCH -t 10-20:30:00     # Set a 30-minute time limit
 #SBATCH -J Epsilon_Val     # Job name
 #SBATCH -o Slurm_Outputs/EpsilonV.out   # Output file for logs
 
