@@ -51,9 +51,9 @@ train_indices, attack_indices = train_indices[:split_idx], train_indices[split_i
 train_data = Subset(train_dataset, train_indices)
 attack_data = Subset(train_dataset, attack_indices)
 
-train_loader = DataLoader(train_data, batch_size=256, shuffle=True)  # Shuffle within batches
-attack_loader = DataLoader(attack_data, batch_size=256, shuffle=False)
-test_loader = DataLoader(test_dataset, batch_size=1024, shuffle=False)
+train_loader = DataLoader(train_data, batch_size=32, shuffle=True)  # Shuffle within batches
+attack_loader = DataLoader(attack_data, batch_size=32, shuffle=False)
+test_loader = DataLoader(test_dataset, batch_size=32, shuffle=False)
 
 print(f"Original training samples: {len(train_dataset)}")
 print(f"Training samples after split: {len(train_data)}")
@@ -231,10 +231,11 @@ print(maxValues)
 
 import random
 import pickle
+import pandas as pd
 
-def sample_rgb_values(pixel_freq, pixel_coords, results_df, original_df, save_path=None):
+def sample_rgb_values(pixel_freq, pixel_coords, results_df, original_df, save_path=None, save_interval=100):
     """
-    Sample RGB values based on max_x for each pixel coordinate and optionally save them.
+    Optimized function to sample RGB values based on max_x for each pixel coordinate.
 
     Args:
         pixel_freq (dict): Dictionary of pixel frequencies with coordinates as keys
@@ -242,45 +243,55 @@ def sample_rgb_values(pixel_freq, pixel_coords, results_df, original_df, save_pa
         pixel_coords (list of tuples): List of pixel coordinates to evaluate.
         results_df (pd.DataFrame): DataFrame containing 'x', 'y', 'gray_value', and 'max_x'.
         original_df (pd.DataFrame): Original DataFrame containing pixel RGB and frequency data.
-        save_path (str, optional): Path to save the sampled RGB values. If provided, saves the result.
+        save_path (str, optional): Path to save the sampled RGB values. If provided, saves periodically.
+        save_interval (int, optional): Number of coordinates to process before saving intermediate results.
 
     Returns:
         dict: Dictionary of sampled RGB values for each coordinate and grayscale level.
     """
-    # Initialize a dictionary to store sampled RGB values
-    sampled_rgb_values = {coord: {} for coord in pixel_coords}
+    sampled_rgb_values = {}  # Initialize result dictionary
+
+    # Convert pixel_freq to a flattened DataFrame for faster lookups
+    flat_pixel_freq = []
+    for (x, y), rgb_dict in pixel_freq.items():
+        for rgb, entries in rgb_dict.items():
+            flat_pixel_freq.append((x, y, *rgb, len(entries)))
+    freq_df = pd.DataFrame(flat_pixel_freq, columns=['x', 'y', 'R', 'G', 'B', 'frequency'])
 
     # Iterate through the pixel coordinates
-    for (i, j) in pixel_coords:
-        # Filter the results DataFrame for the current coordinate
-        coord_df = results_df[(results_df['x'] == i) & (results_df['y'] == j)]
+    for idx, (i, j) in enumerate(pixel_coords):
+        sampled_rgb_values[(i, j)] = {}
+        # Filter for the current coordinate
+        coord_results = results_df[(results_df['x'] == i) & (results_df['y'] == j)]
 
-        # Iterate through the rows for this coordinate
-        for _, row in coord_df.iterrows():
+        # Process each grayscale value and max_x for the coordinate
+        for _, row in coord_results.iterrows():
             gray_value, max_x = row['gray_value'], row['max_x']
 
-            # Filter the original DataFrame for matching grayscale and pixel coordinates
+            # Filter original DataFrame for grayscale match
             original_coord_df = original_df[
                 (original_df['x'] == i) & 
                 (original_df['y'] == j) & 
                 (original_df['gray_value'].round().astype(int) == int(round(gray_value)))
             ]
 
-            # Extract RGB values from pixel_freq for the matching grayscale and coordinate
-            rgb_values = []
-            for _, orig_row in original_coord_df.iterrows():
-                rgb_key = (orig_row['R'], orig_row['G'], orig_row['B'])
-                if rgb_key in pixel_freq[(i, j)]:
-                    rgb_values.extend([entry[0] for entry in pixel_freq[(i, j)][rgb_key]])
+            # Extract RGB values
+            if not original_coord_df.empty:
+                rgb_values = original_coord_df[['R', 'G', 'B']].values.tolist()
+                # Sample up to max_x values or return an empty list if insufficient
+                sampled_rgb_values[(i, j)][gray_value] = random.sample(rgb_values, int(max_x)) if len(rgb_values) >= max_x else []
 
-            # Sample up to max_x RGB values, or return an empty list if insufficient values
-            sampled_rgb_values[(i, j)][gray_value] = random.sample(rgb_values, int(max_x)) if len(rgb_values) >= max_x else []
+        # Save intermediate results periodically
+        if save_path and idx % save_interval == 0:
+            with open(save_path, 'wb') as f:
+                pickle.dump(sampled_rgb_values, f)
+            print(f"Saved intermediate results after processing {idx + 1} coordinates.")
 
-    # Save the sampled RGB values if a save path is provided
+    # Final save
     if save_path:
         with open(save_path, 'wb') as f:
             pickle.dump(sampled_rgb_values, f)
-        print(f"Sampled RGB values saved to {save_path}")
+        print(f"Final sampled RGB values saved to {save_path}")
 
     return sampled_rgb_values
 
@@ -292,7 +303,7 @@ import time
 
 start_time = time.time()
 
-sampled_values = sample_rgb_values(pixel_freq, top_22_coords, results_df, result_df, save_path="/home/j597s263/scratch/j597s263/Datasets/Defense/Resnet/SampledValues/t2e4_cif.pkl")
+sampled_values = sample_rgb_values(pixel_freq, top_22_coords, results_df, result_df, save_path="/home/j597s263/scratch/j597s263/Datasets/Defense/Resnet/SampledValues/Opt/t2e4_cif.pkl")
 
 end_time = time.time()
 
