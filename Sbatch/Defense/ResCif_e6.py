@@ -51,9 +51,9 @@ train_indices, attack_indices = train_indices[:split_idx], train_indices[split_i
 train_data = Subset(train_dataset, train_indices)
 attack_data = Subset(train_dataset, attack_indices)
 
-train_loader = DataLoader(train_data, batch_size=32, shuffle=True)  # Shuffle within batches
-attack_loader = DataLoader(attack_data, batch_size=32, shuffle=False)
-test_loader = DataLoader(test_dataset, batch_size=32, shuffle=False)
+train_loader = DataLoader(train_data, batch_size=128, shuffle=True)  # Shuffle within batches
+attack_loader = DataLoader(attack_data, batch_size=128, shuffle=False)
+test_loader = DataLoader(test_dataset, batch_size=128, shuffle=False)
 
 print(f"Original training samples: {len(train_dataset)}")
 print(f"Training samples after split: {len(train_data)}")

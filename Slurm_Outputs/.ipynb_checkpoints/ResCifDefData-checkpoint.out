@@ -1,0 +1,19 @@
+/moosefs/scratch/j597s263/j597s263/SEDPD/Sbatch/Defense/ResCif_e5.py:158: DeprecationWarning: DataFrameGroupBy.apply operated on the grouping columns. This behavior is deprecated, and in a future version of pandas the grouping columns will be excluded from the operation. Either pass `include_groups=False` to exclude the groupings or explicitly select the grouping columns after groupby to silence this warning.
+  result = grouped.apply(
+/moosefs/scratch/j597s263/j597s263/SEDPD/Sbatch/Defense/ResCif_e8.py:158: DeprecationWarning: DataFrameGroupBy.apply operated on the grouping columns. This behavior is deprecated, and in a future version of pandas the grouping columns will be excluded from the operation. Either pass `include_groups=False` to exclude the groupings or explicitly select the grouping columns after groupby to silence this warning.
+  result = grouped.apply(
+/moosefs/scratch/j597s263/j597s263/SEDPD/Sbatch/Defense/ResCif_e6.py:158: DeprecationWarning: DataFrameGroupBy.apply operated on the grouping columns. This behavior is deprecated, and in a future version of pandas the grouping columns will be excluded from the operation. Either pass `include_groups=False` to exclude the groupings or explicitly select the grouping columns after groupby to silence this warning.
+  result = grouped.apply(
+/moosefs/scratch/j597s263/j597s263/SEDPD/Sbatch/Defense/ResCif_e3.py:158: DeprecationWarning: DataFrameGroupBy.apply operated on the grouping columns. This behavior is deprecated, and in a future version of pandas the grouping columns will be excluded from the operation. Either pass `include_groups=False` to exclude the groupings or explicitly select the grouping columns after groupby to silence this warning.
+  result = grouped.apply(
+/moosefs/scratch/j597s263/j597s263/SEDPD/Sbatch/Defense/ResCif_e7.py:158: DeprecationWarning: DataFrameGroupBy.apply operated on the grouping columns. This behavior is deprecated, and in a future version of pandas the grouping columns will be excluded from the operation. Either pass `include_groups=False` to exclude the groupings or explicitly select the grouping columns after groupby to silence this warning.
+  result = grouped.apply(
+/moosefs/scratch/j597s263/j597s263/SEDPD/Sbatch/Defense/ResCif_e4.py:158: DeprecationWarning: DataFrameGroupBy.apply operated on the grouping columns. This behavior is deprecated, and in a future version of pandas the grouping columns will be excluded from the operation. Either pass `include_groups=False` to exclude the groupings or explicitly select the grouping columns after groupby to silence this warning.
+  result = grouped.apply(
+/var/spool/slurm/tmp/job61146/slurm_script: line 24: 702616 Killed                  python3 Sbatch/Defense/ResCif_e3.py
+/var/spool/slurm/tmp/job61146/slurm_script: line 24: 702617 Killed                  python3 Sbatch/Defense/ResCif_e4.py
+/var/spool/slurm/tmp/job61146/slurm_script: line 24: 702618 Killed                  python3 Sbatch/Defense/ResCif_e5.py
+/var/spool/slurm/tmp/job61146/slurm_script: line 24: 702620 Killed                  python3 Sbatch/Defense/ResCif_e7.py
+/var/spool/slurm/tmp/job61146/slurm_script: line 24: 702621 Killed                  python3 Sbatch/Defense/ResCif_e8.py
+/var/spool/slurm/tmp/job61146/slurm_script: line 24: 702619 Killed                  python3 Sbatch/Defense/ResCif_e6.py
+slurmstepd: error: Detected 6 oom_kill events in StepId=61146.batch. Some of the step tasks have been OOM Killed.
