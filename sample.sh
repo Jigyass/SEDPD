@@ -12,12 +12,21 @@
 source SHAP/bin/activate
 
 # Run the Python scripts in parallel (hard-coded paths)
-python3 Sbatch/Defense/ResCif_e3.py 
-python3 Sbatch/Defense/ResCif_e4.py 
-python3 Sbatch/Defense/ResCif_e5.py 
-python3 Sbatch/Defense/ResCif_e6.py 
-python3 Sbatch/Defense/ResCif_e7.py 
-python3 Sbatch/Defense/ResCif_e8.py 
+python3 Sbatch/Defense/ResImgE3.py
+python3 Sbatch/Defense/ResImgE4.py
+python3 Sbatch/Defense/ResImgE5.py
+python3 Sbatch/Defense/ResImgE6.py
+python3 Sbatch/Defense/ResImgE7.py
+python3 Sbatch/Defense/ResImgE8.py
+python3 Sbatch/Defense/ConvCifE2.py
+python3 Sbatch/Defense/ConvCifE3.py
+python3 Sbatch/Defense/ConvCifE4.py
+python3 Sbatch/Defense/ConvCifE5.py
+python3 Sbatch/Defense/ConvCifE6.py
+python3 Sbatch/Defense/ConvCifE7.py
+python3 Sbatch/Defense/ConvCifE8.py
+
+
 
 
 # Wait for all scripts to finish
