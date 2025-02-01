@@ -1,0 +1,24 @@
+Job 61734 running on g031
+/moosefs/scratch/j597s263/j597s263/SEDPD/SHAP/lib64/python3.9/site-packages/torch/optim/lr_scheduler.py:224: UserWarning: Detected call of `lr_scheduler.step()` before `optimizer.step()`. In PyTorch 1.1.0 and later, you should call them in the opposite order: `optimizer.step()` before `lr_scheduler.step()`.  Failure to do this will result in PyTorch skipping the first value of the learning rate schedule. See more details at https://pytorch.org/docs/stable/optim.html#how-to-adjust-learning-rate
+  warnings.warn(
+Number of training samples: 90000
+Number of attack samples: 10000
+Number of test samples: 10000
+Epoch [1/150], Training Loss: 4.8654
+Epoch [1/150], Test Loss: 33.5141, Test Accuracy: 0.00%
+Epoch [2/150], Training Loss: 3.9727
+Epoch [2/150], Test Loss: 8.6243, Test Accuracy: 1.04%
+Epoch [3/150], Training Loss: 3.2419
+Epoch [3/150], Test Loss: 9.6564, Test Accuracy: 0.34%
+Epoch [4/150], Training Loss: 2.6768
+Epoch [4/150], Test Loss: 11.1699, Test Accuracy: 0.52%
+Epoch [5/150], Training Loss: 2.1683
+Epoch [5/150], Test Loss: 12.1737, Test Accuracy: 0.65%
+Traceback (most recent call last):
+  File "/moosefs/scratch/j597s263/j597s263/SEDPD/Sbatch/ResTinyBase.py", line 255, in <module>
+    scheduler.step()
+  File "/moosefs/scratch/j597s263/j597s263/SEDPD/SHAP/lib64/python3.9/site-packages/torch/optim/lr_scheduler.py", line 238, in step
+    values = self.get_lr()
+  File "/moosefs/scratch/j597s263/j597s263/SEDPD/SHAP/lib64/python3.9/site-packages/torch/optim/lr_scheduler.py", line 2120, in get_lr
+    raise ValueError(
+ValueError: Tried to step 4501 times. The specified number of total steps is 4500
