@@ -133,7 +133,8 @@ scheduler = optim.lr_scheduler.OneCycleLR(
     div_factor=10,
     final_div_factor=100,
     steps_per_epoch=30,
-    epochs=epochs
+    epochs=epochs,
+    total_steps=None
 )
 
 criterion = nn.CrossEntropyLoss()
