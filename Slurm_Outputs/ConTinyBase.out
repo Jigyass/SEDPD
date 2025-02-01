@@ -1,1 +1,22 @@
 Job 61735 running on g031
+Number of training samples: 90000
+Number of attack samples: 10000
+Number of test samples: 10000
+Epoch [1/150], Training Loss: 4.4595
+Epoch [1/150], Test Loss: 7.1206, Test Accuracy: 0.23%
+Epoch [2/150], Training Loss: 3.4998
+Epoch [2/150], Test Loss: 8.0909, Test Accuracy: 1.04%
+Epoch [3/150], Training Loss: 2.8703
+Epoch [3/150], Test Loss: 9.3979, Test Accuracy: 0.47%
+Epoch [4/150], Training Loss: 2.4083
+Epoch [4/150], Test Loss: 10.6824, Test Accuracy: 0.60%
+Epoch [5/150], Training Loss: 2.0412
+Epoch [5/150], Test Loss: 10.7210, Test Accuracy: 0.57%
+Traceback (most recent call last):
+  File "/moosefs/scratch/j597s263/j597s263/SEDPD/Sbatch/ConvTinyBase.py", line 169, in <module>
+    scheduler.step()
+  File "/moosefs/scratch/j597s263/j597s263/SEDPD/SHAP/lib64/python3.9/site-packages/torch/optim/lr_scheduler.py", line 238, in step
+    values = self.get_lr()
+  File "/moosefs/scratch/j597s263/j597s263/SEDPD/SHAP/lib64/python3.9/site-packages/torch/optim/lr_scheduler.py", line 2120, in get_lr
+    raise ValueError(
+ValueError: Tried to step 4501 times. The specified number of total steps is 4500
