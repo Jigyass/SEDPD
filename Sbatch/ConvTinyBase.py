@@ -56,9 +56,9 @@ remaining_indices = list(set(range(num_train)) - set(attack_indices))
 train_sampler = SubsetRandomSampler(remaining_indices)
 attack_sampler = SubsetRandomSampler(attack_indices)
 
-train_loader = DataLoader(train_dataset, batch_size=128, shuffle=True)
-attack_loader = DataLoader(train_dataset, batch_size=128, shuffle=True)
-test_loader = DataLoader(test_dataset, batch_size=128, shuffle=False)
+train_loader = DataLoader(train_dataset, batch_size=256, shuffle=True)
+attack_loader = DataLoader(train_dataset, batch_size=256, shuffle=True)
+test_loader = DataLoader(test_dataset, batch_size=256, shuffle=False)
 
 # Print dataset sizes
 print(f"Number of training samples: {len(remaining_indices)}")
@@ -117,7 +117,110 @@ model = ConvMixer().to('cuda')
 # In[ ]:
 
 
+import torch
+import torch.nn as nn
+import torch.optim as optim
+from torch.amp import autocast, GradScaler
+
 # Hyperparameters
+epochs = 200  # Increased from 150 for better convergence
+learning_rate = 3e-4
+opt_eps = 1e-3
+clip_grad = 1.0
+weight_decay = 1e-2  # Increased for better generalization
+device = 'cuda'
+
+# Optimizer with higher weight decay
+optimizer = optim.AdamW(model.parameters(), lr=learning_rate, eps=opt_eps, weight_decay=weight_decay)
+
+# OneCycleLR Scheduler for first phase of training
+onecycle_scheduler = optim.lr_scheduler.OneCycleLR(
+    optimizer,
+    max_lr=learning_rate * 5,  # Adjusted to prevent excessive oscillation
+    pct_start=0.3,
+    anneal_strategy='cos',
+    div_factor=10,
+    final_div_factor=100,
+    steps_per_epoch=len(train_loader),
+    epochs=epochs,
+    total_steps=None
+)
+
+# Cosine Annealing Scheduler for fine-tuning phase
+cosine_scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=epochs, eta_min=learning_rate / 50)
+
+# Loss function
+criterion = nn.CrossEntropyLoss()
+
+# Mixed precision
+scaler = GradScaler()
+
+# Training and Testing Loop
+for epoch in range(epochs):
+    # Training phase
+    model.train()
+    running_loss = 0.0
+
+    for images, labels in train_loader:
+        # Move data to GPU
+        images, labels = images.to(device), labels.to(device)
+
+        # Forward and backward pass with AMP
+        with autocast(device_type='cuda'):
+            outputs = model(images)
+            loss = criterion(outputs, labels)
+
+        optimizer.zero_grad()
+        scaler.scale(loss).backward()
+
+        # Gradient clipping
+        scaler.unscale_(optimizer)
+        torch.nn.utils.clip_grad_norm_(model.parameters(), clip_grad)
+
+        # Optimizer step
+        scaler.step(optimizer)
+        scaler.update()
+
+        # Step OneCycleLR scheduler for first phase of training
+        onecycle_scheduler.step()
+
+        running_loss += loss.item()
+
+    # Log training loss for the epoch
+    print(f"Epoch [{epoch+1}/{epochs}], Training Loss: {running_loss/len(train_loader):.4f}")
+
+    # Switch to cosine annealing scheduler after OneCycleLR completes
+    if epoch >= epochs // 2:
+        cosine_scheduler.step()
+
+    # Testing phase after each epoch
+    model.eval()
+    correct = 0
+    total = 0
+    test_loss = 0.0
+
+    with torch.no_grad():
+        for images, labels in test_loader:
+            # Move data to GPU
+            images, labels = images.to(device), labels.to(device)
+
+            outputs = model(images)
+            loss = criterion(outputs, labels)
+            test_loss += loss.item()
+
+            _, predicted = torch.max(outputs, 1)
+            total += labels.size(0)
+            correct += (predicted == labels).sum().item()
+
+    # Log test accuracy and loss
+    test_accuracy = 100 * correct / total
+    print(f"Epoch [{epoch+1}/{epochs}], Test Loss: {test_loss/len(test_loader):.4f}, Test Accuracy: {test_accuracy:.2f}%")
+
+
+# In[ ]:
+
+
+'''# Hyperparameters
 epochs = 150
 learning_rate = 3e-4
 opt_eps = 1e-3
@@ -133,8 +236,7 @@ scheduler = optim.lr_scheduler.OneCycleLR(
     div_factor=10,
     final_div_factor=100,
     steps_per_epoch=len(train_loader),
-    epochs=epochs,
-    total_steps=None
+    epochs=epochs
 )
 
 criterion = nn.CrossEntropyLoss()
@@ -194,7 +296,7 @@ for epoch in range(epochs):
 
     # Log test accuracy and loss
     test_accuracy = 100 * correct / total
-    print(f"Epoch [{epoch+1}/{epochs}], Test Loss: {test_loss/len(test_loader):.4f}, Test Accuracy: {test_accuracy:.2f}%")
+    print(f"Epoch [{epoch+1}/{epochs}], Test Loss: {test_loss/len(test_loader):.4f}, Test Accuracy: {test_accuracy:.2f}%")'''
 
 
 # In[ ]:

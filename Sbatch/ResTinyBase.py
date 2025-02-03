@@ -56,9 +56,9 @@ remaining_indices = list(set(range(num_train)) - set(attack_indices))
 train_sampler = SubsetRandomSampler(remaining_indices)
 attack_sampler = SubsetRandomSampler(attack_indices)
 
-train_loader = DataLoader(train_dataset, batch_size=128, shuffle=True)
-attack_loader = DataLoader(train_dataset, batch_size=128, shuffle=True)
-test_loader = DataLoader(test_dataset, batch_size=128, shuffle=False)
+train_loader = DataLoader(train_dataset, batch_size=256, shuffle=True)
+attack_loader = DataLoader(train_dataset, batch_size=256, shuffle=True)
+test_loader = DataLoader(test_dataset, batch_size=256, shuffle=False)
 
 # Print dataset sizes
 print(f"Number of training samples: {len(remaining_indices)}")
@@ -208,18 +208,34 @@ model = ResNet50(num_classes=200).to('cuda')
 # In[ ]:
 
 
+CUDA_LAUNCH_BLOCKING=1
+
+
+# In[ ]:
+
+
+import torch
+import torch.nn as nn
+import torch.optim as optim
+from torchvision.models import resnet50
+from torch.amp import autocast, GradScaler
+
 # Hyperparameters
-epochs = 150
-learning_rate = 3e-4
+epochs = 150  # ResNet-50 needs longer training
+learning_rate = 0.1  # Standard for ResNet with SGD
 opt_eps = 1e-3
 clip_grad = 1.0
-device = 'cuda'  
+weight_decay = 1e-4  # Regularization for SGD
+device = 'cuda'
 
-optimizer = optim.AdamW(model.parameters(), lr=learning_rate, eps=opt_eps)
-scheduler = optim.lr_scheduler.OneCycleLR(
+# Optimizer (SGD works best for ResNet)
+optimizer = optim.SGD(model.parameters(), lr=learning_rate, momentum=0.9, weight_decay=weight_decay)
+
+# OneCycleLR for first half of training
+onecycle_scheduler = optim.lr_scheduler.OneCycleLR(
     optimizer,
-    max_lr=learning_rate*10,
-    pct_start=0.3,
+    max_lr=learning_rate,  # Peak LR during training
+    pct_start=0.3,  # Warm-up period
     anneal_strategy='cos',
     div_factor=10,
     final_div_factor=100,
@@ -228,10 +244,16 @@ scheduler = optim.lr_scheduler.OneCycleLR(
     total_steps=None
 )
 
+# Cosine Annealing Scheduler for fine-tuning in later stages
+cosine_scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=epochs, eta_min=learning_rate / 100)
+
+# Loss function
 criterion = nn.CrossEntropyLoss()
 
+# Mixed precision training
 scaler = GradScaler()
 
+# Training and Testing Loop
 for epoch in range(epochs):
     # Training phase
     model.train()
@@ -240,27 +262,39 @@ for epoch in range(epochs):
     for images, labels in train_loader:
         images, labels = images.to(device), labels.to(device)
 
+        optimizer.zero_grad()
+
+        # Forward pass with mixed precision
         with autocast(device_type='cuda'):
             outputs = model(images)
             loss = criterion(outputs, labels)
 
-        optimizer.zero_grad()
+        # Backward pass
         scaler.scale(loss).backward()
 
+        # Gradient clipping
         scaler.unscale_(optimizer)
         torch.nn.utils.clip_grad_norm_(model.parameters(), clip_grad)
 
+        # Optimizer step
         scaler.step(optimizer)
         scaler.update()
-        scheduler.step()
+
+        # Step OneCycleLR during first phase
+        onecycle_scheduler.step()
 
         running_loss += loss.item()
 
+    # Log training loss
     print(f"Epoch [{epoch+1}/{epochs}], Training Loss: {running_loss/len(train_loader):.4f}")
 
+    # Switch to Cosine Annealing LR after OneCycleLR is done
+    if epoch >= epochs // 2:
+        cosine_scheduler.step()
+
+    # Testing phase
     model.eval()
-    correct = 0
-    total = 0
+    correct, total = 0, 0
     test_loss = 0.0
 
     with torch.no_grad():
