@@ -5,7 +5,7 @@
 #SBATCH -c 24                              # Request 16 CPU cores
 #SBATCH --mem=80GB                         # Request 80GB memory
 #SBATCH -t 5-23:20:00                      # 5 hour time limit
-#SBATCH -J ResLimeExp                      # Name of the job
+#SBATCH -J ConLimeExp                      # Name of the job
 #SBATCH -o Slurm_Outputs/MniLIMEConv.out   # Save output to slurm-<job_id>.out
 
 # Load modules (if needed) - Uncomment and customize as required
