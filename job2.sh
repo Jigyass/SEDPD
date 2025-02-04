@@ -6,7 +6,7 @@
 #SBATCH --mem=180GB                        # Request 80GB memory
 #SBATCH -t 5-23:20:00                      # 5 hour time limit
 #SBATCH -J ConTinyBase                     # Name of the job
-#SBATCH -o Slurm_Outputs/ConTinyBase.out   # Save output to slurm-<job_id>.out
+#SBATCH -o Slurm_Outputs/MnisResSHAP.out   # Save output to slurm-<job_id>.out
 
 # Load modules (if needed) - Uncomment and customize as required
 # module load cuda/11.3
@@ -18,7 +18,7 @@ source SHAP/bin/activate
 echo "Job ${SLURM_JOB_ID} running on ${HOSTNAME}"
 
 # Run your Python script
-python3 Sbatch/ConvTinyBase.py
+python3 Sbatch/Mnist_ResSHAP.py
 
 # Optional: Deactivate virtual environment (cleanup)
 deactivate
