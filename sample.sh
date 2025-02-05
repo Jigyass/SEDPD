@@ -12,12 +12,15 @@
 source SHAP/bin/activate
 
 # Run the Python scripts in parallel (hard-coded paths)
-python3 Sbatch/Mnist_ConvSHAP.py &
-python3 Sbatch/DTE4.py &
-python3 Sbatch/DTE5.py &
-python3 Sbatch/DTE6.py &
-python3 Sbatch/DTE7.py &
-python3 Sbatch/DTE8.py &
+python3 Sbatch/Eps2.py &
+python3 Sbatch/Eps3.py &
+python3 Sbatch/Eps4.py &
+python3 Sbatch/Eps5.py &
+python3 Sbatch/Eps6.py &
+python3 Sbatch/Eps7.py &
+python3 Sbatch/Eps8.py &
+
+
 
 
 
