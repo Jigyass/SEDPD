@@ -1,0 +1,10 @@
+Job 63236 running on g031
+Model loaded successfully!
+Total training samples: 60000
+Training samples after split: 54000
+Attack samples: 6000
+Testing samples: 10000
+Traceback (most recent call last):
+  File "/moosefs/scratch/j597s263/j597s263/SEDPD/Sbatch/Mnist_ConvSHAP.py", line 149, in <module>
+    shap_values += batch_shap_values[i]
+ValueError: operands could not be broadcast together with shapes (1,224,224,10) (1,224,224,200) (1,224,224,10) 

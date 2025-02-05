@@ -1,12 +1,12 @@
 #!/bin/bash
 
-#SBATCH -p gpu                           # Specify the GPU partition
-#SBATCH --gres=gpu:v100:1                # Request 1 A100 GPU
-#SBATCH -c 16                            # Request 16 CPU cores
-#SBATCH --mem=80GB                       # Request 80GB memory
-#SBATCH -t 5-23:20:00                    # 5 hour time limit
-#SBATCH -J ConvCifLim                    # Name of the job
-#SBATCH -o Slurm_Outputs/ConvCifLime.out  # Save output to slurm-<job_id>.out
+#SBATCH -p gpu                             # Specify the GPU partition
+#SBATCH --gres=gpu:a100:1                  # Request 1 A100 GPU
+#SBATCH -c 96                              # Request 16 CPU cores
+#SBATCH --mem=500GB                         # Request 80GB memory
+#SBATCH -t 5-23:20:00                      # 5 hour time limit
+#SBATCH -J ConLimeExp                      # Name of the job
+#SBATCH -o Slurm_Outputs/MniLIMEConv.out   # Save output to slurm-<job_id>.out
 
 # Load modules (if needed) - Uncomment and customize as required
 # module load cuda/11.3
@@ -18,8 +18,7 @@ source SHAP/bin/activate
 echo "Job ${SLURM_JOB_ID} running on ${HOSTNAME}"
 
 # Run your Python script
-python3 Sbatch/ConvCifLim.py
+python3 Sbatch/LimeConvMNI.py
 
 # Optional: Deactivate virtual environment (cleanup)
 deactivate
-

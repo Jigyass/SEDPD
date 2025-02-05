@@ -12,20 +12,12 @@
 source SHAP/bin/activate
 
 # Run the Python scripts in parallel (hard-coded paths)
-python3 Sbatch/Defense/ResImgE3.py
-python3 Sbatch/Defense/ResImgE4.py
-python3 Sbatch/Defense/ResImgE5.py
-python3 Sbatch/Defense/ResImgE6.py
-python3 Sbatch/Defense/ResImgE7.py
-python3 Sbatch/Defense/ResImgE8.py
-python3 Sbatch/Defense/ConvCifE2.py
-python3 Sbatch/Defense/ConvCifE3.py
-python3 Sbatch/Defense/ConvCifE4.py
-python3 Sbatch/Defense/ConvCifE5.py
-python3 Sbatch/Defense/ConvCifE6.py
-python3 Sbatch/Defense/ConvCifE7.py
-python3 Sbatch/Defense/ConvCifE8.py
-
+python3 Sbatch/Mnist_ConvSHAP.py &
+python3 Sbatch/DTE4.py &
+python3 Sbatch/DTE5.py &
+python3 Sbatch/DTE6.py &
+python3 Sbatch/DTE7.py &
+python3 Sbatch/DTE8.py &
 
 
 

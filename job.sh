@@ -1,9 +1,9 @@
 #!/bin/bash
 
 #SBATCH -p gpu                             # Specify the GPU partition
-#SBATCH --gres=gpu:v100:1                  # Request 1 A100 GPU
-#SBATCH -c 24                              # Request 16 CPU cores
-#SBATCH --mem=80GB                         # Request 80GB memory
+#SBATCH --gres=gpu:a100:1                  # Request 1 A100 GPU
+#SBATCH -c 96                              # Request 16 CPU cores
+#SBATCH --mem=500GB                         # Request 80GB memory
 #SBATCH -t 5-23:20:00                      # 5 hour time limit
 #SBATCH -J ConLimeExp                      # Name of the job
 #SBATCH -o Slurm_Outputs/MniLIMEConv.out   # Save output to slurm-<job_id>.out
