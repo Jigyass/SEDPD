@@ -1,0 +1,5 @@
+Model and dataset loaded successfully!
+Traceback (most recent call last):
+  File "/moosefs/scratch/j597s263/j597s263/SEDPD/Explan_Values_Mod/ShapCifE2.py", line 86, in <module>
+    shap_values += batch_shap_values[i]
+ValueError: non-broadcastable output operand with shape (1,224,224,10) doesn't match the broadcast shape (3,224,224,10)
